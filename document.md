@@ -57,6 +57,62 @@ Different CPUs understand different ISAs — just like people may speak English,
 
 ---
 
+### 🍳 What Is an Instruction Set?
+
+Let’s go deeper into the core of ISA — the **Instruction Set** itself.
+
+---
+
+### 👨‍🍳 Chef Analogy Continued
+
+* **Chef** = The CPU
+* **Recipe Book** = The program you want the chef to follow
+* **Each Step in the Recipe** = An **instruction**
+
+But here's the catch:
+The chef can only follow instructions **they’ve been trained to understand** — such as:
+
+* "Boil water"
+* "Chop onions"
+* "Add salt"
+* "Serve on plate"
+
+> 💡 These steps are what we call the **Instruction Set**.
+
+If you write: "Cook like grandma" — the chef gets confused. That command isn't in the set of steps they know!
+
+---
+
+### 📋 So, Technically…
+
+> An **Instruction Set** is the complete list of **basic commands** that a CPU can execute — like load, add, store, jump, etc.
+
+Every CPU comes with a **fixed set** of instructions it understands, and every program written for that CPU must use only those.
+
+---
+
+### 🔄 Instruction Set vs ISA
+
+| 🧩 Term                                | 📘 Meaning                                                                       |
+| -------------------------------------- | -------------------------------------------------------------------------------- |
+| **Instruction Set**                    | The actual commands the CPU can execute (like "add", "move", "jump")             |
+| **Instruction Set Architecture (ISA)** | The full set of rules: instruction set + how they’re encoded, accessed, and used |
+
+> Think of **Instruction Set** as the **vocabulary**, and **ISA** as the **grammar + usage rules** for building correct sentences.
+
+---
+
+### 🧠 Simple Example (in CPU terms):
+
+* `LOAD A, 5` → Load number 5 into register A
+* `ADD A, B` → Add the contents of A and B
+* `STORE A, 1000` → Save result into memory at address 1000
+* `JUMP 200` → Move to instruction at line 200
+
+These are part of an instruction set that a RISC-V or x86 processor would understand.
+
+---
+
 ### 🔤 Examples of ISA and What Uses Them
 
 | 🖥️ CPU Type          | 🧠 ISA It Understands | 📱 Found In                       |
@@ -66,6 +122,8 @@ Different CPUs understand different ISAs — just like people may speak English,
 | Custom, Educational   | RISC-V                | Smartwatches, IoT, academic chips |
 
 ---
+
+## 🧠 Understanding RISC-V
 
 ### 📦 What Is RISC-V?
 
