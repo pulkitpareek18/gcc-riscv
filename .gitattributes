@@ -1,0 +1,2 @@
+riscv/bin/* filter=lfs diff=lfs merge=lfs -text
+riscv/libexec/gcc/riscv64-unknown-elf/15.1.0/* filter=lfs diff=lfs merge=lfs -text
