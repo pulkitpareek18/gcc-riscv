@@ -474,3 +474,184 @@ hello: ELF 64-bit LSB executable, UCB RISC-V ...
 ```
 
 ---
+
+## 🛠️ GCC Compilation Flow (with Intermediate Files & Opcodes)
+
+This guide walks through how a C file is compiled into an executable ELF binary using GCC, showing each stage, intermediate file, and how to extract machine code (opcodes).
+
+---
+
+## 📄 1. **Source File**
+
+```c
+// hello.c
+#include <stdio.h>
+
+int main() {
+    printf("Hello, RISC-V!\n");
+    return 0;
+}
+```
+
+---
+
+## 🔁 Compilation Stages
+
+### ✅ Step 1: Preprocessing
+
+```bash
+riscv64-unknown-elf-gcc -E hello.c -o hello.i
+```
+
+* **Input:** `hello.c`
+* **Output:** `hello.i` (Preprocessed C source)
+* **What it does:** Expands `#include`, `#define`, and removes comments.
+
+---
+
+### ✅ Step 2: Compilation to Assembly
+
+```bash
+riscv64-unknown-elf-gcc -S hello.i -o hello.s
+```
+
+* **Input:** `hello.i`
+* **Output:** `hello.s` (Assembly code)
+* **What it does:** Converts C code into target-specific assembly (e.g., RISC-V assembly)
+
+---
+
+### ✅ Step 3: Assembly to Object File (ELF format)
+
+```bash
+riscv64-unknown-elf-gcc -c hello.s -o hello.o
+```
+
+* **Input:** `hello.s`
+* **Output:** `hello.o` (ELF object file)
+* **What it does:** Converts assembly to machine code (opcodes), stored in `.text` section of an ELF.
+
+---
+
+### ✅ Step 4: Linking Object File to Executable ELF
+
+```bash
+riscv64-unknown-elf-gcc hello.o -o hello.elf
+```
+
+* **Input:** `hello.o`
+* **Output:** `hello.elf` (final executable)
+* **What it does:** Links object file with standard libraries and startup code.
+
+---
+
+## 🧪 Save All Intermediate Files Automatically
+
+```bash
+riscv64-unknown-elf-gcc -save-temps hello.c -o hello.elf
+```
+
+Generates:
+
+| File        | Description                  |
+| ----------- | ---------------------------- |
+| `hello.i`   | Preprocessed source          |
+| `hello.s`   | Assembly code                |
+| `hello.o`   | ELF object file with opcodes |
+| `hello.elf` | Final linked ELF executable  |
+
+---
+
+## 🔍 Viewing Opcodes (Machine Code)
+
+### 🛠️ Disassemble `.o` or `.elf` File
+
+```bash
+objdump -d hello.o        # For object file
+objdump -d hello.elf      # For executable
+```
+
+### 📦 Sample Output:
+
+```
+0000000000000000 <main>:
+   0:   00000517        auipc   a0,0x0
+   4:   00050513        mv      a0,a0
+   8:   00008067        ret
+```
+
+* Middle column (e.g., `00000517`, `00050513`) = **Opcodes**
+* These are stored in `.text` section of the ELF file.
+
+---
+
+### 🔎 View Sections (Optional)
+
+```bash
+readelf -S hello.o
+```
+
+Shows `.text`, `.data`, `.bss`, `.symtab`, etc.
+
+---
+
+### 📥 Extract `.text` Section Binary Only
+
+```bash
+objcopy -O binary --only-section=.text hello.elf text.bin
+hexdump -C text.bin
+```
+
+* View raw opcodes as hex in `text.bin`.
+
+---
+
+## ✅ Summary
+
+| Stage         | File        | Format   | Contains Opcodes? | Description                 |
+| ------------- | ----------- | -------- | ----------------- | --------------------------- |
+| Preprocessing | `hello.i`   | C text   | ❌                 | Macros and headers expanded |
+| Compilation   | `hello.s`   | Assembly | ❌                 | Human-readable assembly     |
+| Assembly      | `hello.o`   | **ELF**  | ✅ `.text` section | Machine code in ELF object  |
+| Linking       | `hello.elf` | **ELF**  | ✅ `.text` section | Final executable binary     |
+
+---
+
+### 🔖 Embedding Custom Compiler Identity in RISC-V ELF Binaries
+
+To embed a custom tag like `Pulkit-RISCV-GCC v1.0` in the output binary:
+
+#### ✅ Method: Use `.ident` Directive in C
+
+```c
+asm(".ident \"Pulkit-RISCV-GCC v1.0\"");
+```
+
+This places the string into the ELF’s `.comment` section.
+
+#### 🔍 Verify It:
+
+```bash
+readelf -p .comment square.elf
+```
+
+You should see:
+
+```
+String dump of section '.comment':
+  [     0]  Pulkit-RISCV-GCC v1.0
+```
+
+#### ❗ Note on `file` Command:
+
+```bash
+file square.elf
+```
+
+Output *may not show* your `.ident` string directly:
+
+```
+square.elf: ELF 64-bit LSB executable, RISC-V, ...
+```
+
+This is expected — the `file` command doesn't always read `.comment` for RISC-V binaries.
